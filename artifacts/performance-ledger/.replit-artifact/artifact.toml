@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Performance Ledger"
+version = "1.0.0"
+id = "artifacts/performance-ledger"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21313
+
+[services.development]
+run = "pnpm --filter @workspace/performance-ledger run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/performance-ledger", "run", "build" ]
+publicDir = "artifacts/performance-ledger/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21313"
+BASE_PATH = "/"

@@ -1,0 +1,94 @@
+The important thing
+The stack does NOT matter nearly as much as:
+Architecture
+Product quality
+UI polish
+Data model
+Product story
+You are building a platform product, not a Python demo.
+The stack it chose is actually strong
+Frontend
+React + Vite + Tailwind
+Excellent.
+Backend
+Express + TypeScript
+Very production-standard.
+Database
+PostgreSQL + Drizzle
+Modern and clean.
+What you should verify after scaffold generation
+Once Agent finishes, check if you have something like:
+client/
+server/
+shared/
+or
+frontend/
+backend/
+Either is fine.
+MOST IMPORTANT
+Check that it generated these pages:
+Executive Dashboard
+Service Scorecard
+Service Detail
+ROI Summary
+Flaky Signals
+Evidence Packets
+If those exist, you are in good shape.
+Your next task after generation finishes
+Open the app preview.
+Then check:
+1. Visual quality
+Does it look:
+enterprise
+premium
+executive
+clean
+modern
+OR:
+student dashboard
+hackathon project
+If it looks amateur, we immediately iterate.
+What we care about most right now
+Not backend perfection.
+Not infra.
+Not auth.
+Not deployment.
+We care about:
+First visual impact.
+Because this product lives or dies on presentation quality initially.
+What you want the UI to feel like
+Somewhere between:
+Palantir
+Datadog
+Linear
+Stripe Dashboard
+Vercel
+Retool
+NOT:
+Bootstrap admin panel
+student analytics project
+Once the scaffold finishes
+Send me screenshots of:
+Dashboard
+Sidebar
+Service table
+Charts
+Then I’ll help you:
+Make it enterprise-grade
+Improve architecture
+Add the real product intelligence
+Add scoring logic
+Add flaky detection logic
+Add evidence packets
+Add infrastructure cleanly
+One important thing
+The fact that the Agent automatically adapted the stack is actually a GOOD sign.
+It means:
+The project is becoming product-oriented instead of language-oriented.
+That is the correct direction for something like Performance Ledger.
+What your MVP should ultimately feel like
+Not:
+a monitoring dashboard
+But:
+a command center for engineering governance
+That distinction is critical.

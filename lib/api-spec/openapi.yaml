@@ -1,0 +1,681 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: Performance Ledger API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: services
+    description: Service management
+  - name: dashboard
+    description: Executive dashboard
+  - name: roi
+    description: ROI tracking
+  - name: flaky
+    description: Flaky signal detection
+  - name: evidence
+    description: Evidence packets
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /services:
+    get:
+      operationId: listServices
+      tags: [services]
+      summary: List all services with scores
+      responses:
+        "200":
+          description: List of services
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Service"
+
+  /services/{id}:
+    get:
+      operationId: getService
+      tags: [services]
+      summary: Get a single service with full detail
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Service detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceDetail"
+        "404":
+          description: Not found
+
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Executive dashboard summary metrics
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /dashboard/debt-trend:
+    get:
+      operationId: getDebtTrend
+      tags: [dashboard]
+      summary: Portfolio-level performance debt trend over time
+      responses:
+        "200":
+          description: Debt trend data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TrendPoint"
+
+  /dashboard/mission-readiness:
+    get:
+      operationId: getMissionReadiness
+      tags: [dashboard]
+      summary: Mission readiness breakdown by service
+      responses:
+        "200":
+          description: Mission readiness data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MissionReadinessItem"
+
+  /roi/summary:
+    get:
+      operationId: getRoiSummary
+      tags: [roi]
+      summary: ROI summary from performance automation
+      responses:
+        "200":
+          description: ROI summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoiSummary"
+
+  /roi/breakdown:
+    get:
+      operationId: getRoiBreakdown
+      tags: [roi]
+      summary: ROI breakdown per service
+      responses:
+        "200":
+          description: ROI breakdown
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RoiServiceItem"
+
+  /flaky/signals:
+    get:
+      operationId: listFlakySignals
+      tags: [flaky]
+      summary: List all flaky benchmark signals
+      responses:
+        "200":
+          description: Flaky signals
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FlakySignal"
+
+  /flaky/summary:
+    get:
+      operationId: getFlakySignalSummary
+      tags: [flaky]
+      summary: Flaky signal aggregate stats
+      responses:
+        "200":
+          description: Flaky signal summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlakySignalSummary"
+
+  /evidence:
+    get:
+      operationId: listEvidencePackets
+      tags: [evidence]
+      summary: List all evidence packets
+      responses:
+        "200":
+          description: Evidence packets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EvidencePacket"
+
+  /evidence/{id}:
+    get:
+      operationId: getEvidencePacket
+      tags: [evidence]
+      summary: Get a specific evidence packet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Evidence packet
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EvidencePacket"
+        "404":
+          description: Not found
+
+  /releases:
+    get:
+      operationId: listReleases
+      tags: [services]
+      summary: List recent releases with governance status
+      responses:
+        "200":
+          description: Releases
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Release"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+
+    Service:
+      type: object
+      required: [id, name, debtScore, healthScore, missionReadiness, status, tier, lastUpdated]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        debtScore:
+          type: number
+          description: 0-100, lower is better
+        healthScore:
+          type: number
+          description: 0-100, higher is better
+        missionReadiness:
+          type: string
+          enum: [READY, AT_RISK, DEGRADED, CRITICAL]
+        status:
+          type: string
+          enum: [HEALTHY, WARNING, CRITICAL, UNKNOWN]
+        tier:
+          type: string
+          enum: [TIER_1, TIER_2, TIER_3]
+        lastUpdated:
+          type: string
+        p50Latency:
+          type: number
+        p95Latency:
+          type: number
+        p99Latency:
+          type: number
+        errorRate:
+          type: number
+        throughput:
+          type: number
+        owner:
+          type: string
+        releaseCount:
+          type: integer
+        score:
+          type: number
+          description: 0-100, higher is better (computed by scoring engine)
+        grade:
+          type: string
+          enum: [A, B, C, D, F]
+        scoreDelta:
+          type: number
+          description: Change in score from prior period (positive = improving)
+        scoreTrend:
+          type: string
+          enum: [UP, DOWN, STABLE]
+
+    ServiceDetail:
+      type: object
+      required: [id, name, debtScore, healthScore, missionReadiness, status, tier, lastUpdated]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        debtScore:
+          type: number
+        healthScore:
+          type: number
+        missionReadiness:
+          type: string
+          enum: [READY, AT_RISK, DEGRADED, CRITICAL]
+        status:
+          type: string
+          enum: [HEALTHY, WARNING, CRITICAL, UNKNOWN]
+        tier:
+          type: string
+          enum: [TIER_1, TIER_2, TIER_3]
+        lastUpdated:
+          type: string
+        p50Latency:
+          type: number
+        p95Latency:
+          type: number
+        p99Latency:
+          type: number
+        errorRate:
+          type: number
+        throughput:
+          type: number
+        owner:
+          type: string
+        releaseCount:
+          type: integer
+        latencyTrend:
+          type: array
+          items:
+            $ref: "#/components/schemas/TrendPoint"
+        errorRateTrend:
+          type: array
+          items:
+            $ref: "#/components/schemas/TrendPoint"
+        debtHistory:
+          type: array
+          items:
+            $ref: "#/components/schemas/TrendPoint"
+        recentReleases:
+          type: array
+          items:
+            $ref: "#/components/schemas/Release"
+        flakySignals:
+          type: array
+          items:
+            $ref: "#/components/schemas/FlakySignal"
+        evidencePackets:
+          type: array
+          items:
+            $ref: "#/components/schemas/EvidencePacket"
+        score:
+          type: number
+          description: 0-100, higher is better (computed by scoring engine)
+        grade:
+          type: string
+          enum: [A, B, C, D, F]
+        scoreDelta:
+          type: number
+        scoreTrend:
+          type: string
+          enum: [UP, DOWN, STABLE]
+        scoreComponents:
+          $ref: "#/components/schemas/ScoreComponents"
+        scoreDrivers:
+          type: array
+          items:
+            $ref: "#/components/schemas/ScoreDriver"
+        recommendedAction:
+          type: string
+
+    ScoreComponents:
+      type: object
+      required: [stability, regressionFrequency, regressionSeverity, trend, testCoverage, signalReliability]
+      properties:
+        stability:
+          type: number
+          description: 0-100 score for error rate and latency stability
+        regressionFrequency:
+          type: number
+          description: 0-100 score for release block frequency
+        regressionSeverity:
+          type: number
+          description: 0-100 score for severity of regressions
+        trend:
+          type: number
+          description: 0-100 score for trajectory and mission readiness
+        testCoverage:
+          type: number
+          description: 0-100 score for automation coverage
+        signalReliability:
+          type: number
+          description: 0-100 score for benchmark signal trustworthiness
+
+    ScoreDriver:
+      type: object
+      required: [component, label, impact, detail]
+      properties:
+        component:
+          type: string
+        label:
+          type: string
+        impact:
+          type: string
+          enum: [LOW, MEDIUM, HIGH]
+        detail:
+          type: string
+
+    DashboardSummary:
+      type: object
+      required: [totalServices, avgDebtScore, avgHealthScore, criticalServices, atRiskServices, readyServices, totalReleases, blockedReleases, totalFlakySignals, portfolioMissionReadiness]
+      properties:
+        totalServices:
+          type: integer
+        avgDebtScore:
+          type: number
+        avgHealthScore:
+          type: number
+        criticalServices:
+          type: integer
+        atRiskServices:
+          type: integer
+        readyServices:
+          type: integer
+        totalReleases:
+          type: integer
+        blockedReleases:
+          type: integer
+        totalFlakySignals:
+          type: integer
+        portfolioMissionReadiness:
+          type: string
+          enum: [READY, AT_RISK, DEGRADED, CRITICAL]
+        debtScoreChange:
+          type: number
+        healthScoreChange:
+          type: number
+
+    TrendPoint:
+      type: object
+      required: [date, value]
+      properties:
+        date:
+          type: string
+        value:
+          type: number
+        label:
+          type: ["string", "null"]
+
+    MissionReadinessItem:
+      type: object
+      required: [serviceId, serviceName, readiness, score]
+      properties:
+        serviceId:
+          type: string
+        serviceName:
+          type: string
+        readiness:
+          type: string
+          enum: [READY, AT_RISK, DEGRADED, CRITICAL]
+        score:
+          type: number
+        trend:
+          type: string
+          enum: [UP, DOWN, STABLE]
+
+    RoiSummary:
+      type: object
+      required: [totalSavingsUsd, incidentsPrevented, deploymentTimeReductionPct, automationCoverageScore, mttrReductionPct, annualizedSavingsUsd]
+      properties:
+        totalSavingsUsd:
+          type: number
+        incidentsPrevented:
+          type: integer
+        deploymentTimeReductionPct:
+          type: number
+        automationCoverageScore:
+          type: number
+        mttrReductionPct:
+          type: number
+        annualizedSavingsUsd:
+          type: number
+        savingsTrend:
+          type: array
+          items:
+            $ref: "#/components/schemas/TrendPoint"
+
+    RoiServiceItem:
+      type: object
+      required: [serviceId, serviceName, savingsUsd, incidentsPrevented, automationCoverage, timeReductionHrs]
+      properties:
+        serviceId:
+          type: string
+        serviceName:
+          type: string
+        savingsUsd:
+          type: number
+        incidentsPrevented:
+          type: integer
+        automationCoverage:
+          type: number
+        timeReductionHrs:
+          type: number
+
+    FlakySignal:
+      type: object
+      required: [id, serviceId, serviceName, benchmark, flakinessScore, detectedAt, status, severity]
+      properties:
+        id:
+          type: string
+        serviceId:
+          type: string
+        serviceName:
+          type: string
+        benchmark:
+          type: string
+        flakinessScore:
+          type: number
+          description: 0-100, higher is worse (computed flakyRiskScore)
+        detectedAt:
+          type: string
+        status:
+          type: string
+          enum: [OPEN, INVESTIGATING, RESOLVED, SUPPRESSED]
+        severity:
+          type: string
+          enum: [LOW, MEDIUM, HIGH, CRITICAL]
+        description:
+          type: ["string", "null"]
+        affectedRuns:
+          type: integer
+        totalRuns:
+          type: integer
+        flakyRiskScore:
+          type: number
+          description: Computed 0-100 flaky risk score from detection engine
+        flakyLabel:
+          type: string
+          enum: [Stable, Watch, Noisy, Flaky, Untrusted]
+        confidence:
+          type: string
+          enum: [HIGH, MODERATE, LOW, VERY_LOW]
+        primaryCause:
+          type: string
+        gateRecommendation:
+          type: string
+        remediationRecommendation:
+          type: string
+        executiveSummary:
+          type: string
+        developerNote:
+          type: string
+        riskComponents:
+          $ref: "#/components/schemas/FlakyRiskComponents"
+
+    FlakyRiskComponents:
+      type: object
+      required: [sameCommitFlipRate, metricVarianceScore, runnerNoiseScore, baselineDriftScore, nearThresholdFailureRate, rerunDisagreementRate]
+      properties:
+        sameCommitFlipRate:
+          type: number
+          description: 0-100 — how often same commit produces different result
+        metricVarianceScore:
+          type: number
+          description: 0-100 — how much the measured metric value varies
+        runnerNoiseScore:
+          type: number
+          description: 0-100 — runner environment noise contribution
+        baselineDriftScore:
+          type: number
+          description: 0-100 — how much benchmark baseline has drifted
+        nearThresholdFailureRate:
+          type: number
+          description: 0-100 — frequency of failures within 10% of threshold
+        rerunDisagreementRate:
+          type: number
+          description: 0-100 — how often reruns disagree with original result
+
+    FlakySignalSummary:
+      type: object
+      required: [totalSignals, openSignals, criticalSignals, avgFlakinessScore, mostAffectedService]
+      properties:
+        totalSignals:
+          type: integer
+        openSignals:
+          type: integer
+        criticalSignals:
+          type: integer
+        avgFlakinessScore:
+          type: number
+        mostAffectedService:
+          type: string
+
+    EvidencePacket:
+      type: object
+      required: [id, serviceId, serviceName, releaseId, releaseVersion, commitSha, generatedAt, status, eventType, decision, policyName, debtScoreAtRelease, passed, failed, blocked, confidence, signalTrustScore, estimatedEngineeringHoursSaved, estimatedCloudWasteAvoided, ownerTeam, recommendedAction, auditHash]
+      properties:
+        id:
+          type: string
+        serviceId:
+          type: string
+        serviceName:
+          type: string
+        releaseId:
+          type: string
+        releaseVersion:
+          type: string
+        commitSha:
+          type: string
+        generatedAt:
+          type: string
+        status:
+          type: string
+          enum: [PASSED, FAILED, PENDING, BLOCKED]
+        eventType:
+          type: string
+          enum: [RELEASE_GATE_EVALUATION, AUTOMATED_BLOCK, POLICY_OVERRIDE, MANUAL_APPROVAL]
+        decision:
+          type: string
+          enum: [BLOCKED, ALLOWED, WARNED, OVERRIDDEN]
+        policyName:
+          type: string
+        metricViolated:
+          type: ["string", "null"]
+        metricUnit:
+          type: ["string", "null"]
+        baselineValue:
+          type: ["number", "null"]
+        observedValue:
+          type: ["number", "null"]
+        deltaPercent:
+          type: ["number", "null"]
+        debtScoreAtRelease:
+          type: number
+        passed:
+          type: integer
+        failed:
+          type: integer
+        blocked:
+          type: integer
+        confidence:
+          type: string
+          enum: [HIGH, MODERATE, LOW, VERY_LOW]
+        signalTrustScore:
+          type: number
+          description: 0-100, higher is more trustworthy
+        flakyRiskLabel:
+          type: ["string", "null"]
+          enum: [Stable, Watch, Noisy, Flaky, Untrusted]
+        estimatedEngineeringHoursSaved:
+          type: number
+        estimatedCloudWasteAvoided:
+          type: number
+          description: USD
+        ownerTeam:
+          type: string
+        recommendedAction:
+          type: string
+        auditHash:
+          type: string
+          description: Deterministic SHA-256 derived from packet contents for tamper detection
+        notes:
+          type: ["string", "null"]
+        approvedBy:
+          type: ["string", "null"]
+
+    Release:
+      type: object
+      required: [id, serviceId, serviceName, version, governanceStatus, createdAt]
+      properties:
+        id:
+          type: string
+        serviceId:
+          type: string
+        serviceName:
+          type: string
+        version:
+          type: string
+        governanceStatus:
+          type: string
+          enum: [APPROVED, BLOCKED, PENDING, BYPASSED]
+        createdAt:
+          type: string
+        deployedAt:
+          type: ["string", "null"]
+        blockReason:
+          type: ["string", "null"]
+        debtScoreAtRelease:
+          type: number

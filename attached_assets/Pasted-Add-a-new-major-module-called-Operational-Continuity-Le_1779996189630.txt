@@ -1,0 +1,73 @@
+Add a new major module called Operational Continuity Ledger.
+
+This module focuses on filing-season operational resilience. It should detect and explain technical continuity risks such as server reboots, service restarts, failed post-reboot health checks, manual recovery, queue backlog, database connection pool pressure, cache cold starts, dependency timeouts, autoscaling lag, and alerting gaps.
+
+Add backend route:
+GET /api/continuity
+
+The API should return:
+- filingSeasonContinuityRisk
+- recoveryReadinessScore
+- totalRebootEvents
+- servicesImpacted
+- autoRecoveredServices
+- manualRecoveryRequired
+- averageRecoveryTimeMinutes
+- failedPostRebootChecks
+- queueBacklogEvents
+- databasePoolPressureEvents
+- cacheColdStartEvents
+- autoscalingLagEvents
+- dependencyTimeoutEvents
+- continuityTimeline
+- affectedServices
+- automationRecommendations
+- continuityEvidencePackets
+
+Add scoring logic:
+RecoveryReadinessScore should use:
+- autoRestartConfigured
+- healthChecksAvailable
+- smokeTestsAvailable
+- dependencyChecksAvailable
+- cacheWarmupAvailable
+- previousRecoveryTime
+- manualRecoveryRequired
+- postRecoveryValidationPassed
+
+ContinuityRiskScore should use:
+- reboot frequency
+- number of impacted services
+- manual recovery count
+- failed health checks
+- recovery time
+- repeated incidents
+- criticality of affected services
+
+Add frontend page:
+Continuity Ledger
+
+Add navigation item:
+Continuity Ledger
+
+The page should include:
+1. Filing Season Continuity KPI cards
+2. Reboot and recovery timeline
+3. Affected services table
+4. Recovery readiness score by service
+5. Manual recovery required flags
+6. Automation recommendations
+7. Continuity evidence packets
+8. Continuity risk explanation
+
+Also update the Executive Dashboard with:
+- Filing Season Continuity Risk
+- Recovery Readiness Score
+- Manual Recoveries Required
+- Failed Post-Reboot Checks
+
+Also update the Evidence Packets page to include continuity event types.
+
+Use executive language. This is not uptime monitoring. Position it as operational continuity and filing-season resilience governance.
+
+Keep the existing visual style. Do not add external branding, comments, badges, or references.

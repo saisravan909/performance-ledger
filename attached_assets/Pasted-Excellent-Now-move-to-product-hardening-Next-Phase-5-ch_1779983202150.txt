@@ -1,0 +1,62 @@
+Excellent. Now move to product hardening.
+Next: Phase 5 checklist
+Do these in order.
+1. Verify the app
+Run the app and verify all pages work end to end. Check for broken routes, broken API calls, TypeScript errors, missing data, chart rendering issues, and console errors. Fix any issues found.
+2. Add tests
+Add backend unit tests for:
+- Performance Debt Score calculation
+- grade assignment
+- flaky risk classification
+- ROI calculation
+- evidence packet hash generation
+
+Add frontend smoke tests or simple component checks if supported. Add a test command to package.json.
+3. Add product polish
+Polish the UI copy and executive language across the app. Make every page feel like an enterprise performance governance product. Add empty states, loading states, error states, and clear explanations for scores, signal trust, ROI, and evidence packets.
+4. Add import/export
+Add CSV or JSON import/export support for demo data and evidence packets. Add buttons to export:
+- Executive summary
+- Service scorecard
+- Evidence packet
+- ROI summary
+5. Prepare GitHub push
+Before connecting to GitHub, clean:
+No platform-specific config files
+No generated comments
+No node_modules
+No .env
+No secrets
+Then update .gitignore.
+6. Create clean README
+Ask:
+Rewrite README.md as a professional open-source product README for Performance Ledger. Include product overview, features, architecture, local setup, environment variables, demo data, API endpoints, roadmap, and screenshots section. Do not mention the hosting platform.
+Immediate next prompt to paste
+Use this now:
+Perform a full product hardening pass.
+
+Verify the app end to end:
+- all pages render
+- all API routes work
+- scoring engine works
+- flaky detector works
+- evidence packet generation works
+- PostgreSQL persistence works or gracefully falls back to seeded demo data
+- no TypeScript errors
+- no console errors
+- no broken charts
+- no missing fields
+
+Then add:
+- loading states
+- empty states
+- error states
+- clearer executive copy
+- consistent score badges
+- consistent severity badges
+- professional README
+- no platform branding, comments, badges, or references anywhere
+
+Do not change the core product direction.
+Keep the product positioned as an executive performance governance platform.
+After that, send me the summary and
